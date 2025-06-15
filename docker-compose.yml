@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  # Backend (Laravel)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mantek-backend
+    volumes:
+      - ./backend:/var/www
+    ports:
+      - "8000:8000"
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: mantek
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  # Base de datos MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mantek-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: mantek
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # Frontend (Nuxt 3 SSR)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: mantek-frontend
+    ports:
+      - "8080:3000"
+    depends_on:
+      - backend
+    environment:
+      # 👇 Esta es la URL del backend desde el punto de vista del contenedor
+      NUXT_PUBLIC_LARAVEL_API_URL: http://host.docker.internal:8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  mysql_data:

@@ -1,0 +1,1 @@
+export type MachineStatus = 'operational' | 'maintenance' | 'warning' | 'critical' | 'retired'
