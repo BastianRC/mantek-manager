@@ -4,7 +4,7 @@ namespace Src\Role\Application\DTOs;
 
 use Src\Shared\Application\DTOs\BaseResponseDto;
 
-class AllRolesResponseDto extends BaseResponseDto
+class AllRolesResponseDTO extends BaseResponseDto
 {
     /**
      * @param RoleResponseDTO[] $roles

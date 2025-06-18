@@ -18,7 +18,7 @@ class RoleResponseDTO extends BaseResponseDto
         public string $color,
         public bool $isActive,
         public array $permissions,
-        public int $usersCount,
+        public array $users,
         public RoleCreatedAt $createdAt,
         public RoleUpdatedAt $updatedAt
     ) {
@@ -43,7 +43,14 @@ class RoleResponseDTO extends BaseResponseDto
                     ],
                     $this->permissions
                 ),
-                'users_count' => $this->usersCount,
+                'users' => array_map(fn($u) => [
+                    'id' => $u->getId(),
+                    'first_name' => $u->getFirstName(),
+                    'last_name' => $u->getLastName(),
+                    'email' => $u->getEmail()->value(),
+                    'department' => $u->getDepartment(),
+                    'avatar_url' => $u->getAvatarUrl()
+                ], $this->users),
                 'created_at' => $this->createdAt->toString(),
                 'updated_at' => $this->updatedAt->toString()
             ]

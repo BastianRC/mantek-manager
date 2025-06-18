@@ -2,8 +2,6 @@
 
 namespace Src\Role\Application\DTOs;
 
-use Src\Role\Domain\ValueObject\RolePermission;
-
 class UpdateRoleRequestDTO
 {
     /**

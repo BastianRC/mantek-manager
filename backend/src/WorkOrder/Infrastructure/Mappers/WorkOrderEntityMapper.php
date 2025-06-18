@@ -20,6 +20,7 @@ use Src\WorkOrder\Domain\ValueObject\WorkOrderStatus;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderType;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderUpdatedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderNumber;
+use Src\WorkOrder\Domain\ValueObject\WorkOrderResumedAt;
 use Src\WorkOrder\Infrastructure\Persistence\Eloquent\Models\WorkOrderEloquent;
 
 class WorkOrderEntityMapper
@@ -39,6 +40,7 @@ class WorkOrderEntityMapper
             pausedAt: $model->paused_at ? new WorkOrderPausedAt($model->paused_at) : null,
             startedAt: $model->started_at ? new WorkOrderStartedAt($model->started_at) : null,
             completedAt: $model->completed_at ? new WorkOrderCompletedAt($model->completed_at) : null,
+            resumedAt: $model->resumed_at ? new WorkOrderResumedAt($model->resumed_at) : null,
             actualHours: $model->actual_hours,
             assignee: $model->assignee ? UserEntityMapper::toDomain($model->assignee) : null,
             machine: $model->machine ? MachineEntityMapper::toDomain($model->machine) : null,

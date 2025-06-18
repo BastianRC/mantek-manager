@@ -7,6 +7,7 @@ export const filters: FilterDefinition[] = [
         type: 'category',
         options: [
             { value: 'pending', label: 'Pendiente' },
+            { value: 'assigned', label: 'Asignada' },
             { value: 'in_progress', label: 'En Progreso' },
             { value: 'completed', label: 'Completado' },
             { value: 'cancelled', label: 'Cancelado' },

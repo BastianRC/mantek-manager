@@ -1,1 +1,1 @@
-export type WorkOrderStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled'
+export type WorkOrderStatus = 'pending' | 'assigned' | 'in_progress' | 'completed' | 'canceled'

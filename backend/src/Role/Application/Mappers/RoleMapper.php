@@ -2,7 +2,7 @@
 
 namespace Src\Role\Application\Mappers;
 
-use Src\Role\Application\DTOs\AllRolesResponseDto;
+use Src\Role\Application\DTOs\AllRolesResponseDTO;
 use Src\Role\Application\DTOs\RoleDetailsResponseDTO;
 use Src\Role\Application\DTOs\RoleResponseDTO;
 use Src\Role\Domain\Entities\Role;
@@ -20,7 +20,7 @@ class RoleMapper
             color: $role->getColor(),
             isActive: $role->isActive(),
             permissions: $role->getPermissions(),
-            usersCount: $role->getUsersCount(),
+            users: $role->getUsers(),
             createdAt: $role->getCreatedAt(),
             updatedAt: $role->getUpdatedAt(),
         );
@@ -55,7 +55,7 @@ class RoleMapper
             $roles
         );
 
-        return new AllRolesResponseDto(
+        return new AllRolesResponseDTO(
             success: true,
             message: $message,
             roles: $dtos

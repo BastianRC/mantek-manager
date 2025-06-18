@@ -257,7 +257,10 @@ const formSchema = toTypedSchema(z.object({
         .nonempty({ message: 'El telefono es obligatorio' }),
     password: z
         .string()
-        .nonempty({ message: 'La contraseña es obligatoria' }),
+        .nonempty({ message: 'El contraseña es obligatoria' })
+        .min(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
+        .regex(/[A-Z]/, { message: 'La contraseña debe contener al menos una letra mayúscula' })
+        .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: 'La contraseña debe contener al menos un carácter especial' }),
     notes: z
         .string()
         .optional(),

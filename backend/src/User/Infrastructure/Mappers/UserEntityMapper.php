@@ -9,7 +9,7 @@ use Src\User\Domain\ValueObject\UserCreatedAt;
 use Src\User\Domain\ValueObject\UserEmail;
 use Src\User\Domain\ValueObject\UserLastLogin;
 use Src\User\Domain\ValueObject\UserUpdatedAt;
-
+use Src\WorkOrder\Domain\Entities\WorkOrderRelationEntity;
 
 class UserEntityMapper
 {
@@ -28,6 +28,18 @@ class UserEntityMapper
             avatarUrl: $model->avatar_url,
             isActive: $model->is_active,
             lastLogin: $model->last_login ? new UserLastLogin($model->last_login) : null,
+            workOrders: $model->workOrders
+                ? $model->workOrders->map(fn($wo) => new WorkOrderRelationEntity(
+                    id: $wo->id,
+                    orderNumber: $wo->order_number,
+                    name: $wo->title,
+                    status: $wo->status,
+                    type: $wo->type,
+                    asigneeName: $wo->assignee?->first_name . ' ' . $wo->assignee?->last_name,
+                    createdAt: $wo->created_at,
+                    dueAt: $wo->due_at,
+                ))->all()
+                : [],
             createdAt: new UserCreatedAt($model->created_at),
             updatedAt: new UserUpdatedAt($model->updated_at),
             createdBy: null,
@@ -50,7 +62,7 @@ class UserEntityMapper
         $model->notes = $entity->getNotes();
         $model->avatar_url = $entity->getAvatarUrl();
         $model->is_active = $entity->isActive();
-        
+
         $model->last_login = $entity->getLastLogin()?->value();
         $model->created_at = $entity->getCreatedAt()->value();
         $model->updated_at = $entity->getUpdatedAt()->value();

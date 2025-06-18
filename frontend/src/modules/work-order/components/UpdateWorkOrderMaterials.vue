@@ -106,9 +106,9 @@ const getUnitText = (unit: string): string => {
             return '(Unidad)'
         case 'kg':
             return '(Kg)'
-        case 'meter':
+        case 'm':
             return '(Metro)'
-        case 'liter':
+        case 'l':
             return '(Litro)'
         case 'box':
             return '(Caja)'

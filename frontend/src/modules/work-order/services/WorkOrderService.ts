@@ -58,3 +58,39 @@ export const destroy = async (id: number): Promise<void> => {
         throw ErrorMapper.fromHttp(error)
     }
 }
+
+export const play = async (id: number): Promise<WorkOrderDetails> => {
+    try {
+        const response = await useHttpRequest<BaseResponse<WorkOrderDetails>>(`/work-orders/${id}/start`, {
+            method: 'PATCH'
+        })
+
+        return response.data
+    } catch (error) {
+        throw ErrorMapper.fromHttp(error)
+    }
+}
+
+export const pause = async (id: number): Promise<WorkOrderDetails> => {
+    try {
+        const response = await useHttpRequest<BaseResponse<WorkOrderDetails>>(`/work-orders/${id}/pause`, {
+            method: 'PATCH'
+        })
+
+        return response.data
+    } catch (error) {
+        throw ErrorMapper.fromHttp(error)
+    }
+}
+
+export const complete = async (id: number): Promise<WorkOrderDetails> => {
+    try {
+        const response = await useHttpRequest<BaseResponse<WorkOrderDetails>>(`/work-orders/${id}/complete`, {
+            method: 'PATCH'
+        })
+
+        return response.data
+    } catch (error) {
+        throw ErrorMapper.fromHttp(error)
+    }
+}

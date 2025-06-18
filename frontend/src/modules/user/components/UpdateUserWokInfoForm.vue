@@ -12,13 +12,13 @@
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                <!-- <SelectItem v-for="(role, index) in roles" :key="index" :value="role.name">
-                                                {{ role.name }}
-                                            </SelectItem> -->
+                                <SelectItem v-for="(role, index) in roles" :key="index" :value="role.name">
+                                    {{ role.name }}
+                                </SelectItem>
                             </SelectContent>
                         </Select>
 
-                        <p v-else class="text-sm">{{ user.last_name }}</p>
+                        <p v-else class="text-sm">{{ user.role }}</p>
                         <FormMessage />
                     </FormItem>
                 </FormField>
@@ -68,9 +68,11 @@ import SelectContent from '~/components/ui/select/SelectContent.vue';
 import SelectGroup from '~/components/ui/select/SelectGroup.vue';
 import SelectItem from '~/components/ui/select/SelectItem.vue';
 import Select from '~/components/ui/select/Select.vue';
+import type { Role } from '~/modules/role/types/Role';
 
 const props = withDefaults(defineProps<{
     user: UserDetails
+    roles: Role[]
     editMode: boolean
 }>(), {
     editMode: false
@@ -88,18 +90,18 @@ const formSchema = toTypedSchema(z.object({
 const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchema,
     initialValues: {
-        role: '',
+        role: props.user.role,
         department: props.user.department
     }
 })
 
 const submit = handleSubmit(
-  async (values) => {
-    return values
-  },
-  () => {
-    return undefined
-  }
+    async (values) => {
+        return values
+    },
+    () => {
+        return undefined
+    }
 )
 
 defineExpose({

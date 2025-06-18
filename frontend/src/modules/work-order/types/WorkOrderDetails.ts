@@ -20,6 +20,8 @@ export interface WorkOrderDetails {
     completed_at?: string
     estimated_hours: number
     actual_hours?: number
+    is_started: boolean
+    is_paused: boolean
     machine?: Machine
     assignee?: BasicUser
     location: Location

@@ -3,7 +3,7 @@
 
     <HeaderComponent title="Perfil de Ubicación" subtitle="Información y edición de la ubicación">
         <template v-slot:backButton>
-            <Button variant="outline" size="icon" @click="navigateTo('/dashboard/locations')">
+            <Button variant="outline" size="icon" @click="$router.back">
                 <ArrowLeft class="size-4" />
             </Button>
         </template>

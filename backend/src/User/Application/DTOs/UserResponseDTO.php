@@ -19,7 +19,10 @@ class UserResponseDTO extends BaseResponseDto
         public string $department,
         public ?string $avatarUrl,
         public bool $isActive,
-        public ?UserLastLogin $lastLogin
+        public ?UserLastLogin $lastLogin,
+
+        /** @var WorkOrder[] */
+        public ?array $workOrders,
     ) {
         parent::__construct($success, $message);
     }
@@ -39,7 +42,16 @@ class UserResponseDTO extends BaseResponseDto
                 'department' => $this->department,
                 'avatar_url' => $this->avatarUrl,
                 'is_active' => $this->isActive,
-                'last_login' => $this->lastLogin?->toString()
+                'last_login' => $this->lastLogin?->toString(),
+                'work_orders' => array_map(fn($w) => [
+                    'id' => $w->id,
+                    'order_number' => $w->orderNumber,
+                    'name' => $w->name,
+                    'status' => $w->status,
+                    'asignee' => $w->asigneeName,
+                    'created_at' => $w->createdAt,
+                    'due_at' => $w->dueAt
+                ], $this->workOrders),
             ]
         ];
     }

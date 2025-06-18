@@ -46,10 +46,10 @@ class UserEloquentRepository implements UserRepositoryInterface
         $model = UserEntityMapper::toModel($user);
         $model->save();
 
-        $model->assignRole($user->getRole());
+        $model->syncRoles([$user->getRole()]);
 
         $model->load('roles');
-        
+
         return UserEntityMapper::toDomain($model);
     }
 
@@ -64,7 +64,7 @@ class UserEloquentRepository implements UserRepositoryInterface
         $model = UserEloquent::findOrFail($user->getId());
 
         try {
-            $model->assignRole($role);
+            $model->syncRoles($role);
         } catch (RoleDoesNotExist $e) {
             throw $e;
         }

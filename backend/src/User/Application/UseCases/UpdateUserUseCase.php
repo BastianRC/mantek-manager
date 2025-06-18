@@ -45,6 +45,7 @@ class UpdateUserUseCase
             'lastName'    => fn($user, $v) => $user->changeLastName($v),
             'email'       => fn($user, $v) => $user->changeEmail(new UserEmail($v)),
             'phone'       => fn($user, $v) => $user->changePhone($v),
+            'role'        => fn($user, $v) => $user->changeRole($v),
             'password'    => fn($user, $v) => $user->changePassword(new HashedUserPassword(bcrypt($v))),
             'department'  => fn($user, $v) => $user->changeDepartment($v),
             'notes'       => fn($user, $v) => $user->changeNotes($v),

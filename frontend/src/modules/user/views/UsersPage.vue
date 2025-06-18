@@ -3,7 +3,7 @@
 
     <HeaderComponent title="Gestión de Usuarios" subtitle="Administra usuarios, roles y permisos">
         <template v-slot:buttons>
-            <Button @click="navigateTo('users/new')">
+            <Button v-if="hasPermission(PERMISSIONS.CREATE_USER)" @click="navigateTo('users/new')">
                 <PlusIcon class="mr-0 size-4" />
                 <span class="hidden md:block">Nuevo Usuario</span>
             </Button>
@@ -31,6 +31,8 @@ import type { User } from '../types/User';
 import UserDataList from '../components/DataList/UserDataList.vue';
 import LoadingScreen from '~/components/custom/Loading/LoadingScreen.vue';
 import Button from '~/components/ui/button/Button.vue';
+import { hasPermission } from '~/modules/shared/helpers/permissions';
+import { PERMISSIONS } from '~/modules/shared/constants/permissions';
 
 const { data: users, isFetching, suspense, refetch } = useGetUsersList()
 

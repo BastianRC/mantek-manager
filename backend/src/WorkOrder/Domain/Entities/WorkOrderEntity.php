@@ -15,6 +15,7 @@ use Src\WorkOrder\Domain\ValueObject\WorkOrderStartedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderStatus;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderUpdatedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderNumber;
+use Src\WorkOrder\Domain\ValueObject\WorkOrderResumedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderType;
 
 class WorkOrderEntity implements WorkOrder
@@ -34,16 +35,17 @@ class WorkOrderEntity implements WorkOrder
         private ?WorkOrderPausedAt $pausedAt,
         private ?WorkOrderStartedAt $startedAt,
         private ?WorkOrderCompletedAt $completedAt,
+        private ?WorkOrderResumedAt $resumedAt,
         private WorkOrderEstimatedHours $estimatedHours,
         private ?float $actualHours,
         private ?Machine $machine,
-        private User $assignee,
+        private ?User $assignee,
         private Location $location,
 
         /** @var WorkOrderMaterial[] */
         private array $materials,
         private User $createdBy,
-        private User $updatedBy,
+        private ?User $updatedBy,
         private WorkOrderCreatedAt $createdAt,
         private WorkOrderUpdatedAt $updatedAt,
     ) {}
@@ -104,6 +106,10 @@ class WorkOrderEntity implements WorkOrder
     {
         return $this->completedAt;
     }
+    public function getResumedAt(): ?WorkOrderResumedAt
+    {
+        return $this->resumedAt;
+    }
     public function getEstimatedHours(): WorkOrderEstimatedHours
     {
         return $this->estimatedHours;
@@ -116,7 +122,7 @@ class WorkOrderEntity implements WorkOrder
     {
         return $this->machine;
     }
-    public function getAssignee(): User
+    public function getAssignee(): ?User
     {
         return $this->assignee;
     }
@@ -135,7 +141,7 @@ class WorkOrderEntity implements WorkOrder
     {
         return $this->createdBy;
     }
-    public function getUpdatedBy(): User
+    public function getUpdatedBy(): ?User
     {
         return $this->updatedBy;
     }
@@ -208,6 +214,11 @@ class WorkOrderEntity implements WorkOrder
         return $this->withClone(fn($cl) => $cl->completedAt = $completedAt);
     }
 
+    public function changeResumedAt(?WorkOrderResumedAt $resumedAt): self
+    {
+        return $this->withClone(fn($cl) => $cl->resumedAt = $resumedAt);
+    }
+
     public function changeEstimatedHours(WorkOrderEstimatedHours $estimatedHours): self
     {
         return $this->withClone(fn($cl) => $cl->estimatedHours = $estimatedHours);
@@ -252,6 +263,16 @@ class WorkOrderEntity implements WorkOrder
     public function isPersisted(): bool
     {
         return $this->id > 0;
+    }
+
+    public function isStarted(): bool
+    {
+        return $this->startedAt !== null;
+    }
+
+    public function isPaused(): bool
+    {
+        return $this->pausedAt !== null;
     }
 
     private function withClone(\Closure $callback): self

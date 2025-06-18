@@ -4,28 +4,24 @@ namespace Src\WorkOrder\Application\UseCases;
 
 use Src\Location\Domain\Exceptions\LocationNotFoundException;
 use Src\Location\Domain\Repository\LocationRepositoryInterface;
-use Src\Machine\Domain\Exceptions\MachineCategoryNotFoundException;
 use Src\Machine\Domain\Exceptions\MachineNotFoundException;
-use Src\Machine\Domain\Repositories\MachineCategoryRepositoryInterface;
 use Src\Machine\Domain\Repositories\MachineRepositoryInterface;
 use Src\Shared\Domain\Repositories\ChronologyLoggerInterface;
 use Src\User\Domain\Exceptions\UserNotFoundException;
 use Src\User\Domain\Repositories\UserRepositoryInterface;
-use Src\WorkOrder\Application\DTOs\CreateWorkOrderMaterialRequestDTO;
 use Src\WorkOrder\Application\DTOs\CreateWorkOrderRequestDTO;
 use Src\WorkOrder\Application\DTOs\WorkOrderDetailsResponseDTO;
 use Src\WorkOrder\Application\Mappers\WorkOrderMapper;
 use Src\WorkOrder\Domain\Entities\WorkOrderEntity;
 use Src\WorkOrder\Domain\Entities\WorkOrderMaterialEntity;
+use Src\WorkOrder\Domain\Exceptions\InvalidWorkOrderAssigneeAssignmentException;
+use Src\WorkOrder\Domain\Exceptions\WorkOrderMissingAssigneeException;
 use Src\WorkOrder\Domain\Repositories\WorkOrderRepositoryInterface;
-use Src\WorkOrder\Domain\ValueObject\WorkOrderCompletedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderCreatedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderDueAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderEstimatedHours;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderMaterialUnit;
-use Src\WorkOrder\Domain\ValueObject\WorkOrderPausedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderPriority;
-use Src\WorkOrder\Domain\ValueObject\WorkOrderStartedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderStatus;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderType;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderUpdatedAt;
@@ -55,6 +51,14 @@ class CreateWorkOrderUseCase
         $location = $this->locationRepo->findById($dto->locationId);
         throw_if(!$location, LocationNotFoundException::class);
 
+        if ($dto->assigneeId !== null && $dto->status !== 'assigned') {
+            throw new InvalidWorkOrderAssigneeAssignmentException();
+        }
+
+        if ($dto->assigneeId === null && $dto->status !== 'pending') {
+            throw new WorkOrderMissingAssigneeException();
+        }
+
         $order = new WorkOrderEntity(
             id: 0,
             orderNumber: WorkOrderNumber::temp(),
@@ -65,11 +69,12 @@ class CreateWorkOrderUseCase
             status: new WorkOrderStatus($dto->status),
             dueAt: new WorkOrderDueAt($dto->dueAt),
             estimatedHours: new WorkOrderEstimatedHours($dto->estimatedHours),
-            pausedAt: $dto->pausedAt ? new WorkOrderPausedAt($dto->pausedAt) : null,
-            startedAt: $dto->startedAt ? new WorkOrderStartedAt($dto->startedAt) : null,
-            completedAt: $dto->completedAt ? new WorkOrderCompletedAt($dto->completedAt) : null,
+            pausedAt: null,
+            startedAt: null,
+            completedAt: null,
+            resumedAt: null,
             actualHours: null,
-            assignee: $assignee,
+            assignee: $assignee ?? null,
             machine: $machine ?? null,
             location: $location,
             materials: array_map(

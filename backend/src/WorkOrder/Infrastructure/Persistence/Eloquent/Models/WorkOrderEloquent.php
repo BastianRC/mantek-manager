@@ -28,6 +28,7 @@ class WorkOrderEloquent extends Model
         'paused_at',
         'started_at',
         'completed_at',
+        'resumed_at',
         'estimated_hours',
         'actual_hours',
         'requested_by',
@@ -42,6 +43,7 @@ class WorkOrderEloquent extends Model
         'paused_at' => 'datetime',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
+        'resumed_at' => 'datetime',
         'estimated_hours' => 'float',
         'actual_hours' => 'float',
     ];

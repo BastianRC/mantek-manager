@@ -1,3 +1,4 @@
+import type { UserDetails } from "~/modules/user/types/UserDetails";
 import type { Permission } from "./Permission";
 
 export interface Role {
@@ -7,7 +8,7 @@ export interface Role {
     color: string,
     is_active: boolean,
     permissions: Permission[],
-    users_count: number,
+    users: UserDetails[],
     created_at: Date,
     updated_at: Date
 }

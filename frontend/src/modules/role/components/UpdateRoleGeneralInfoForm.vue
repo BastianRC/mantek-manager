@@ -46,7 +46,7 @@
             </div>
             <div class="space-y-2">
                 <Label>Usuarios Asignados</Label>
-                <p class="text-sm">{{ role.users ? role.users.length : 0 }} usuarios</p>
+                <p class="text-sm">{{ role.users ? role.users.length : 0 }} Usuario/s</p>
             </div>
         </div>
     </form>

@@ -14,6 +14,7 @@ class WorkOrderMaterialUnit
         'pcs',
         'm',
         'cm',
+        'box',
         'unit',
     ];
 

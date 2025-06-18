@@ -3,7 +3,6 @@
 namespace Src\WorkOrder\Application\UseCases;
 
 use Src\Location\Domain\Repository\LocationRepositoryInterface;
-use Src\Machine\Domain\Repositories\MachineCategoryRepositoryInterface;
 use Src\Machine\Domain\Repositories\MachineRepositoryInterface;
 use Src\Shared\Domain\Repositories\ChronologyLoggerInterface;
 use Src\User\Domain\Repositories\UserRepositoryInterface;
@@ -11,6 +10,8 @@ use Src\WorkOrder\Application\DTOs\UpdateWorkOrderRequestDTO;
 use Src\WorkOrder\Application\DTOs\WorkOrderDetailsResponseDTO;
 use Src\WorkOrder\Application\Mappers\WorkOrderMapper;
 use Src\WorkOrder\Domain\Entities\WorkOrderMaterialEntity;
+use Src\WorkOrder\Domain\Exceptions\InvalidWorkOrderStatusTransitionException;
+use Src\WorkOrder\Domain\Exceptions\WorkOrderAssigneeModificationNotAllowedException;
 use Src\WorkOrder\Domain\Exceptions\WorkOrderNotFoundException;
 use Src\WorkOrder\Domain\Repositories\WorkOrderRepositoryInterface;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderCompletedAt;
@@ -39,8 +40,21 @@ class UpdateWorkOrderUseCase
         $order = $this->workOrderRepo->findById($dto->id);
         throw_if(!$order, WorkOrderNotFoundException::class);
 
+        $validTransitions = [
+            'pending' => ['pending', 'assigned', 'canceled'],
+            'assigned' => ['assigned', 'pending', 'canceled'],
+            'in_progress' => ['in_progress', 'completed', 'canceled'],
+        ];
+
+        $current = $order->getStatus()->value();
+        $new = $dto->status;
+
+        if (!isset($validTransitions[$current]) || !in_array($new, $validTransitions[$current])) {
+            throw new InvalidWorkOrderStatusTransitionException($current, $new);
+        }
+
         $updatedOrder = $order;
-        
+
         $map = [
             'title' => fn($o, $v) => $o->changeTitle($v),
             'type' => fn($o, $v) => $o->changeType(new WorkOrderType($v)),
@@ -52,7 +66,6 @@ class UpdateWorkOrderUseCase
             'pausedAt' => fn($o, $v) => $o->changePausedAt(new WorkOrderPausedAt($v)),
             'startedAt' => fn($o, $v) => $o->changeStartedAt(new WorkOrderStartedAt($v)),
             'completedAt' => fn($o, $v) => $o->changeCompletedAt(new WorkOrderCompletedAt($v)),
-            'assigneeId' => fn($o, $v) => $o->changeAssignee($this->userRepo->findById($v)),
             'machineId' => fn($o, $v) => $o->changeMachine($this->machineRepo->findById($v)),
             'locationId' => fn($o, $v) => $o->changeLocation($this->locationRepo->findById($v)),
             'requestedBy' => fn($o, $v) => $o->changeRequestedBy($v),
@@ -65,6 +78,14 @@ class UpdateWorkOrderUseCase
             if (!is_null($dto->$key)) {
                 $updatedOrder = $callback($updatedOrder, $dto->$key === '' ? null : $dto->$key);
             }
+        }
+
+        if (!is_null($dto->assigneeId) && $dto->assigneeId !== $order->getAssignee()?->getId()) {
+            if (in_array($order->getStatus()->value(), ['in_progress', 'completed', 'canceled'])) {
+                throw new WorkOrderAssigneeModificationNotAllowedException();
+            }
+
+            $updatedOrder = $updatedOrder->changeAssignee($this->userRepo->findById($dto->assigneeId));
         }
 
         if (!is_null($dto->materials)) {

@@ -9,7 +9,19 @@
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <div class="mb-2 flex flex-wrap items-center gap-3">
-                                <h3 class="text-lg font-semibold">{{ workOrder.title }}</h3>
+                                <div class="flex items-center gap-2">
+                                    <div v-if="workOrder.status === 'in_progress' && workOrder.is_started"
+                                        class="!bg-transparent" :class="`${getWorkOrderStateMeta(workOrder.is_started, workOrder.is_paused).color}`">
+                                        <div class="relative flex items-center justify-start">
+                                            <component class="absolute opacity-75 size-5"
+                                                :class="{ 'animate-ping': !workOrder.is_paused, 'hidden': workOrder.is_paused }"
+                                                :is="getWorkOrderStateMeta(workOrder.is_started, workOrder.is_paused).icon" />
+                                            <component class="relative size-5"
+                                                :is="getWorkOrderStateMeta(workOrder.is_started, workOrder.is_paused).icon" />
+                                        </div>
+                                    </div>
+                                    <h3 class="text-lg font-semibold">{{ workOrder.title }}</h3>
+                                </div>
                                 <Badge :class="`${getWorkOrderStatusMeta(workOrder.status).color} border`">
                                     <component :is="getWorkOrderStatusMeta(workOrder.status).icon"></component>
                                     {{ getWorkOrderStatusMeta(workOrder.status).label }}
@@ -64,25 +76,7 @@
                             </div>
                         </div>
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <MoreHorizontal class="size-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem @click="navigateTo(`work-orders/${workOrder.id}`)">Ver detalles
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="setEditMode(true); navigateTo(`work-orders/${workOrder.id}`)">
-                                    Editar OT
-                                </DropdownMenuItem>
-                                <!-- <DropdownMenuItem>Asignar técnico</DropdownMenuItem>
-                                    <DropdownMenuItem>Cambiar estado</DropdownMenuItem> -->
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem @click="destroy(workOrder.id)" class="text-destructive">Eliminar
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <DropdownComponent :items="getDropdownItems(workOrder)" />
                     </div>
                 </CardContent>
             </Card>
@@ -91,15 +85,8 @@
 </template>
 
 <script setup lang="ts">
-import { Building, Calendar, Cpu, MapPin, MoreHorizontal } from 'lucide-vue-next';
 import Card from '~/components/ui/card/Card.vue';
 import CardContent from '~/components/ui/card/CardContent.vue';
-import DropdownMenu from '~/components/ui/dropdown-menu/DropdownMenu.vue';
-import DropdownMenuTrigger from '~/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
-import Button from '~/components/ui/button/Button.vue';
-import DropdownMenuContent from '~/components/ui/dropdown-menu/DropdownMenuContent.vue';
-import DropdownMenuItem from '~/components/ui/dropdown-menu/DropdownMenuItem.vue';
-import DropdownMenuSeparator from '~/components/ui/dropdown-menu/DropdownMenuSeparator.vue';
 import Badge from '~/components/ui/badge/Badge.vue';
 import { filters } from './filters';
 import DataList from '~/components/custom/DataList/DataList.vue';
@@ -112,6 +99,10 @@ import Avatar from '~/components/ui/avatar/Avatar.vue';
 import AvatarImage from '~/components/ui/avatar/AvatarImage.vue';
 import AvatarFallback from '~/components/ui/avatar/AvatarFallback.vue';
 import { getWorkOrderTypeMeta } from '../../utils/getWorkOrderTypeMeta';
+import type { DropdownButtons } from '~/components/custom/Dropdown/DropdownComponent.vue';
+import { PERMISSIONS } from '~/modules/shared/constants/permissions';
+import DropdownComponent from '~/components/custom/Dropdown/DropdownComponent.vue';
+import { getWorkOrderStateMeta } from '../../utils/getWorkOrderStateMeta';
 
 const { setEditMode } = useEditMode()
 
@@ -120,6 +111,31 @@ const { mutate: destroy } = useDeleteWorkOrder()
 const props = defineProps<{
     workOrders: WorkOrder[]
 }>()
+
+function getDropdownItems(workOrder: WorkOrder): DropdownButtons[] {
+    return [
+        {
+            text: 'Ver perfil',
+            click: () => navigateTo(`work-orders/${workOrder.id}`),
+            canView: PERMISSIONS.VIEW_WORK_ORDER
+        },
+        {
+            text: 'Editar OT',
+            click: () => {
+                setEditMode(true)
+                navigateTo(`work-orders/${workOrder.id}`)
+            },
+            canView: PERMISSIONS.UPDATE_WORK_ORDER
+        },
+        {
+            text: 'Eliminar',
+            click: () => destroy(workOrder.id),
+            class: 'text-destructive',
+            separatorBefore: true,
+            canView: PERMISSIONS.DELETE_WORK_ORDER
+        }
+    ]
+}
 
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-    <SidebarGroup>
+    <SidebarGroup v-if="visibleItems.length !== 0">
         <SidebarGroupLabel>Herramientas</SidebarGroupLabel>
         <SidebarMenu>
             <template v-for="item in visibleItems" :key="item.title">

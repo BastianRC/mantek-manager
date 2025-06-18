@@ -17,22 +17,7 @@
                             </div>
                         </div>
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <MoreHorizontal class="size-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem @click="navigateTo(`machines/${machine.id}`)">Ver perfil
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="setEditMode(true); navigateTo(`machines/${machine.id}`)">
-                                    Editar equipo</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem @click="destroy(machine.id)" class="text-destructive">Dar de baja
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <DropdownComponent :items="getDropdownItems(machine)" />
                     </div>
 
                     <div class="space-y-3 mb-4">
@@ -65,21 +50,18 @@
 </template>
 
 <script setup lang="ts">
-import { Building, Calendar, Cpu, MapPin, MoreHorizontal } from 'lucide-vue-next';
+import { MapPin } from 'lucide-vue-next';
 import Card from '~/components/ui/card/Card.vue';
 import CardContent from '~/components/ui/card/CardContent.vue';
-import DropdownMenu from '~/components/ui/dropdown-menu/DropdownMenu.vue';
-import DropdownMenuTrigger from '~/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
-import Button from '~/components/ui/button/Button.vue';
-import DropdownMenuContent from '~/components/ui/dropdown-menu/DropdownMenuContent.vue';
-import DropdownMenuItem from '~/components/ui/dropdown-menu/DropdownMenuItem.vue';
-import DropdownMenuSeparator from '~/components/ui/dropdown-menu/DropdownMenuSeparator.vue';
 import Badge from '~/components/ui/badge/Badge.vue';
 import { filters } from './filters';
 import DataList from '~/components/custom/DataList/DataList.vue';
 import type { Machine } from '../../types/Machine';
 import { useDeleteMachine } from '../../composables/useDeleteMachine';
 import { getStatusMeta } from '../../utils/getStatusMeta';
+import type { DropdownButtons } from '~/components/custom/Dropdown/DropdownComponent.vue';
+import { PERMISSIONS } from '~/modules/shared/constants/permissions';
+import DropdownComponent from '~/components/custom/Dropdown/DropdownComponent.vue';
 
 const { setEditMode } = useEditMode()
 
@@ -88,6 +70,31 @@ const { mutate: destroy } = useDeleteMachine()
 const props = defineProps<{
     machines: Machine[]
 }>()
+
+function getDropdownItems(machine: Machine): DropdownButtons[] {
+  return [
+    {
+      text: 'Ver perfil',
+      click: () => navigateTo(`machines/${machine.id}`),
+      canView: PERMISSIONS.VIEW_MACHINE
+    },
+    {
+      text: 'Editar máquina',
+      click: () => {
+        setEditMode(true)
+        navigateTo(`machines/${machine.id}`)
+      },
+      canView: PERMISSIONS.UPDATE_MACHINE
+    },
+    {
+      text: 'Eliminar',
+      click: () => destroy(machine.id),
+      class: 'text-destructive',
+      separatorBefore: true,
+      canView: PERMISSIONS.DELETE_MACHINE
+    }
+  ]
+}
 
 </script>
 

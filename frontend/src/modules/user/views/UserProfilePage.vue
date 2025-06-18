@@ -1,5 +1,5 @@
 <template>
-    <LoadingScreen :visible="isFetching" />
+    <LoadingScreen :visible="isFetching && isFetchingRoles" />
 
     <HeaderComponent title="Perfil de Usuario" subtitle="Información y edición de usuario">
         <template v-slot:backButton>
@@ -53,7 +53,7 @@
                                 <CardTitle class="text-xl">Información Laboral</CardTitle>
                             </CardHeader>
                             <CardContent class="space-y-4">
-                                <UpdateUserWokInfoForm v-if="user" :user="user" :edit-mode="editMode"
+                                <UpdateUserWokInfoForm v-if="user && roles" :user="user" :roles="roles" :edit-mode="editMode"
                                     ref="workFormRef" />
                             </CardContent>
                         </Card>
@@ -117,6 +117,7 @@ import AlertMessage from '~/components/custom/Alert/AlertMessage.vue';
 import UpdateUserAvatarForm from '../components/UpdateUserAvatarForm.vue';
 import UserQuickStats from '../components/UserQuickStats.vue';
 import { useUpdateUser } from '../composables/useUpdateUser';
+import { useGetRolesList } from '~/modules/role/composables/useGetRolesList';
 
 const route = useRoute()
 const { editMode, setEditMode, clearEditMode } = useEditMode()
@@ -124,6 +125,8 @@ const { editMode, setEditMode, clearEditMode } = useEditMode()
 const selectedId = ref<number | null>(Number(route.params.id))
 
 const { data: user, isFetching, suspense } = useGetUserById(selectedId)
+const { data: roles, isFetching: isFetchingRoles } = useGetRolesList()
+
 const { mutate: update, isPending } = useUpdateUser()
 
 const generalFormRef = ref()

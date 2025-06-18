@@ -3,7 +3,7 @@
 
     <HeaderComponent title="Gestión de Roles" subtitle="Administra roles de usuario y permisos">
         <template v-slot:buttons>
-            <Button @click="navigateTo('roles/new')">
+            <Button v-if="hasPermission(PERMISSIONS.CREATE_ROLE)" @click="navigateTo('roles/new')">
                 <PlusIcon class="mr-0 size-4" />
                 <span class="hidden lg:block">Nuevo Rol</span>
             </Button>
@@ -31,6 +31,8 @@ import type { StatItem } from '~/components/custom/Stats/StatItem';
 import StatsComponent from '~/components/custom/Stats/StatsComponent.vue';
 import LoadingScreen from '~/components/custom/Loading/LoadingScreen.vue';
 import RoleDataList from '../components/DataList/RoleDataList.vue';
+import { PERMISSIONS } from '~/modules/shared/constants/permissions';
+import { hasPermission } from '~/modules/shared/helpers/permissions';
 
 const { data: roles, isFetching, suspense, refetch } = useGetRolesList()
 
@@ -39,7 +41,7 @@ const filteredRoles: Ref<Role[]> = ref([])
 const stats = computed<StatItem[]>(() => {
     const rolesList = roles.value ?? []
 
-    const totalUsersAssigned = rolesList.reduce((acc, role) => acc + role.users_count, 0)
+    const totalUsersAssigned = rolesList.reduce((acc, role) => acc + role.users.length, 0)
     const totalRoles = rolesList.length
     const activeRoles = rolesList.filter(role => role.is_active).length
     const uniquePermissions = new Set(rolesList.flatMap(role => role.permissions).map(p => p.id))

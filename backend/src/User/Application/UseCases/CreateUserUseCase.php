@@ -2,7 +2,6 @@
 
 namespace Src\User\Application\UseCases;
 
-use Src\Chronology\Domain\Repositories\ChronologyRepositoryInterface;
 use Src\Shared\Domain\Repositories\ChronologyLoggerInterface;
 use Src\User\Application\DTOs\CreateUserRequestDTO;
 use Src\User\Application\DTOs\UserResponseDTO;
@@ -47,6 +46,7 @@ class CreateUserUseCase
             avatarUrl: $dto->avatarUrl,
             isActive: $dto->isActive ?? true,
             lastLogin: null,
+            workOrders: [],
             createdAt: new UserCreatedAt(),
             updatedAt: new UserUpdatedAt(),
             createdBy: $createdBy,

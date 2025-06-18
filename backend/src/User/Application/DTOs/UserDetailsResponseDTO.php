@@ -27,7 +27,10 @@ class UserDetailsResponseDTO extends BaseResponseDto
         public ?User $createdBy,
         public ?User $updatedBy,
         public UserCreatedAt $createdAt,
-        public UserUpdatedAt $updatedAt
+        public UserUpdatedAt $updatedAt,
+
+        /** @var WorkOrder[] */
+        public ?array $workOrders,
     ) {
         parent::__construct($success, $message);
     }
@@ -49,6 +52,15 @@ class UserDetailsResponseDTO extends BaseResponseDto
                 'avatar_url' => $this->avatarUrl,
                 'is_active' => $this->isActive,
                 'last_login' => $this->lastLogin ? $this->lastLogin->toString() : null,
+                'work_orders' => array_map(fn($w) => [
+                    'id' => $w->id,
+                    'order_number' => $w->orderNumber,
+                    'name' => $w->name,
+                    'status' => $w->status,
+                    'asignee' => $w->asigneeName,
+                    'created_at' => $w->createdAt,
+                    'due_at' => $w->dueAt
+                ], $this->workOrders),
                 'created_by' => $this->createdBy ? [
                     'id' => $this->createdBy->getId(),
                     'name' => $this->createdBy->getFullName(),

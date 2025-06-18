@@ -3,7 +3,7 @@
         :filters="filters" :items-per-page-options="[6, 12, 24]" title="Lista de Usuarios"
         @filtered="$emit('filtered', $event)">
         <template #item="{ item }">
-            <Card v-for="(user) in item" :key="user.id" class="transition-colors hover:bg-muted/50 py-0">
+            <Card v-for="(user) in item as User[]" :key="user.id" class="transition-colors hover:bg-muted/50 py-0">
                 <CardContent class="p-6">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center gap-3">
@@ -20,23 +20,7 @@
                                 </div>
                             </div>
                         </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <MoreHorizontal class="size-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem @click="navigateTo(`users/${user.id}`)">Ver perfil</DropdownMenuItem>
-                                <DropdownMenuItem
-                                    @click="setEditMode(true); navigateTo(`users/${user.id}`)">
-                                    Editar usuario</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem @click="destroy(user.id)" class="text-destructive">
-                                    Eliminar
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <DropdownComponent :items="getDropdownItems(user)" />
                     </div>
 
                     <div class="space-y-2 mb-4">
@@ -50,7 +34,7 @@
                         </div>
                         <div class="flex items-center gap-2 text-sm">
                             <Calendar class="size-4 text-muted-foreground" />
-                            <span>Último acceso: {{ user.last_login ?? 'Desconocido' }}</span>
+                            <span>Último acceso: {{ user.last_login ?? '---' }}</span>
                         </div>
                     </div>
 
@@ -62,11 +46,11 @@
 
                     <div class="grid grid-cols-2 gap-4 text-center">
                         <div>
-                            <div class="text-lg font-bold">{{ 0 }}</div>
+                            <div class="text-lg font-bold">{{ user.work_orders.length}}</div>
                             <div class="text-xs text-muted-foreground">Órdenes asignadas</div>
                         </div>
                         <div>
-                            <div class="text-lg font-bold text-green-600">{{ 0 }}</div>
+                            <div class="text-lg font-bold text-green-600">{{ user.work_orders.filter((wo) => wo.status === 'completed').length }}</div>
                             <div class="text-xs text-muted-foreground">Completadas</div>
                         </div>
                     </div>
@@ -77,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { Calendar, Mail, MoreHorizontal, Phone, Users } from 'lucide-vue-next';
+import { Calendar, Mail, Phone, Users } from 'lucide-vue-next';
 import Card from '~/components/ui/card/Card.vue';
 import CardContent from '~/components/ui/card/CardContent.vue';
 import type { User } from '../../types/User';
@@ -85,16 +69,12 @@ import Avatar from '~/components/ui/avatar/Avatar.vue';
 import AvatarImage from '~/components/ui/avatar/AvatarImage.vue';
 import AvatarFallback from '~/components/ui/avatar/AvatarFallback.vue';
 import { getInitials } from '~/lib/utils';
-import DropdownMenu from '~/components/ui/dropdown-menu/DropdownMenu.vue';
-import DropdownMenuTrigger from '~/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
-import Button from '~/components/ui/button/Button.vue';
-import DropdownMenuContent from '~/components/ui/dropdown-menu/DropdownMenuContent.vue';
-import DropdownMenuItem from '~/components/ui/dropdown-menu/DropdownMenuItem.vue';
-import DropdownMenuSeparator from '~/components/ui/dropdown-menu/DropdownMenuSeparator.vue';
 import Badge from '~/components/ui/badge/Badge.vue';
 import { filters } from './filters';
 import DataList from '~/components/custom/DataList/DataList.vue';
 import { useDeleteUser } from '../../composables/useDeleteUser';
+import DropdownComponent, { type DropdownButtons } from '~/components/custom/Dropdown/DropdownComponent.vue';
+import { PERMISSIONS } from '~/modules/shared/constants/permissions';
 
 const { setEditMode } = useEditMode()
 
@@ -103,6 +83,31 @@ const { mutate: destroy } = useDeleteUser()
 const props = defineProps<{
     users: User[]
 }>()
+
+function getDropdownItems(user: User): DropdownButtons[] {
+  return [
+    {
+      text: 'Ver perfil',
+      click: () => navigateTo(`users/${user.id}`),
+      canView: PERMISSIONS.VIEW_USER
+    },
+    {
+      text: 'Editar usuario',
+      click: () => {
+        setEditMode(true)
+        navigateTo(`users/${user.id}`)
+      },
+      canView: PERMISSIONS.UPDATE_USER
+    },
+    {
+      text: 'Eliminar',
+      click: () => destroy(user.id),
+      class: 'text-destructive',
+      separatorBefore: true,
+      canView: PERMISSIONS.DELETE_USER
+    }
+  ]
+}
 
 const getStatusColor = (status: boolean) => {
     switch (status) {

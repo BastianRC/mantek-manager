@@ -27,6 +27,9 @@ class UserEntity implements User
         private UserUpdatedAt $updatedAt,
         private ?User $createdBy,
         private ?User $updatedBy,
+
+        /** @var WorkOrder[] */
+        private ?array $workOrders
     ) {}
 
     public function getId(): int
@@ -98,6 +101,11 @@ class UserEntity implements User
         return $this->updatedBy;
     }
 
+    public function getWorkOrders(): ?array
+    {
+        return $this->workOrders;
+    }
+
     public function isPersisted(): bool
     {
         return $this->id > 0;
@@ -116,6 +124,10 @@ class UserEntity implements User
     public function changeEmail(UserEmail $email): self
     {
         return $this->withClone(fn($c) => $c->email = $email);
+    }
+    public function changeRole(string $role): self
+    {
+        return $this->withClone(fn($c) => $c->role = $role);
     }
 
     public function changePhone(string $phone): self

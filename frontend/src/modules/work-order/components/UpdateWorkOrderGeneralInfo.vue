@@ -34,11 +34,11 @@
                 <FormField v-slot="{ componentField, value }" name="status">
                     <FormItem v-auto-animate>
                         <FormLabel>Estado</FormLabel>
-                        <div v-if="editMode" class="flex items-center gap-2">
+                        <div v-if="editMode && isStatusEditable" class="flex items-center gap-2">
                             <Select v-bind="componentField">
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Seleccionar técnico">
+                                        <SelectValue placeholder="Seleccionar estado">
                                             <component class="size-4" :is="getWorkOrderStatusMeta(value).icon">
                                             </component>
                                             {{ getWorkOrderStatusMeta(value).label }}
@@ -47,7 +47,7 @@
                                 </FormControl>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectItem v-for="(status) in statuses" :key="status.value"
+                                        <SelectItem v-for="(status) in statuses" :disabled="status.disabled" :key="status.value"
                                             :value="status.value">
                                             <component class="size-4" :is="getWorkOrderStatusMeta(status.value).icon">
                                             </component>
@@ -352,13 +352,33 @@ const props = withDefaults(defineProps<{
     editMode: false
 })
 
-const statuses: Ref<{ label: string; value: string }[]> = ref([
-    { label: 'Pendiente', value: 'pending' },
-    { label: 'En progreso', value: 'in_progress' },
-    { label: 'Completada', value: 'completed' },
-    { label: 'Cancelada', value: 'cancelled' }
-])
+const statusOptionsMap = {
+  pending: [
+    { label: 'Pendiente', value: 'pending', disabled: false },
+    { label: 'Asignada', value: 'assigned', disabled: true },
+    { label: 'Cancelada', value: 'canceled', disabled: false }
+  ],
+  assigned: [
+    { label: 'Pendiente', value: 'pending', disabled: false },
+    { label: 'En progreso', value: 'in_progress', disabled: true },
+    { label: 'Cancelada', value: 'canceled', disabled: false }
+  ],
+  in_progress: [
+    { label: 'En progreso', value: 'in_progress', disabled: true },
+    { label: 'Cancelada', value: 'canceled', disabled: false }
+  ],
+  completed: [],
+  canceled: []
+}
 
+const statuses = computed(() => {
+  return statusOptionsMap[props.workOrder.status] || []
+})
+
+const isStatusEditable = computed(() => {
+  const options = statusOptionsMap[props.workOrder.status] || []
+  return options.some(option => !option.disabled)
+})
 
 const types: Ref<{ label: string, value: string }[]> = ref([
     { label: 'Correctiva', value: 'corrective' },
@@ -444,7 +464,9 @@ const submit = handleSubmit(
 
 defineExpose({
     submit,
-    resetForm
+    resetForm,
+    setFieldValue,
+    values
 })
 
 </script>

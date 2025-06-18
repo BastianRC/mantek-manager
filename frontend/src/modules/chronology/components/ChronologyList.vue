@@ -3,7 +3,9 @@
         <div v-for="(chronology, index) in chronologies" :key="index" class="flex gap-3">
             <div class="flex flex-col items-center">
                 <div class="p-2 bg-background border rounded-full">
-                    <component :class="`${getChronologyEventMeta(chronology.event_type).color} size-4`" :is="getChronologyEventMeta(chronology.event_type).icon" ></component>
+                    <component class="!bg-transparent border-none"
+                        :class="`${getChronologyEventMeta(chronology.event_type).color} size-4`"
+                        :is="getChronologyEventMeta(chronology.event_type).icon"></component>
                 </div>
             </div>
 
@@ -17,7 +19,8 @@
         </div>
     </div>
 
-    <AlertMessage v-else title="¡Sin resultados!" message="No se ha encontrado la cronologia de este elemento" :icon="AlertCircle" />
+    <AlertMessage v-else title="¡Sin resultados!" message="No se ha encontrado la cronologia de este elemento"
+        :icon="AlertCircle" />
 </template>
 
 <script setup lang="ts">

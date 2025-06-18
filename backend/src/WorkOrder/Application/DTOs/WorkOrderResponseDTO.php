@@ -29,6 +29,8 @@ class WorkOrderResponseDTO extends BaseResponseDto
         public WorkOrderPriority $priority,
         public WorkOrderDueAt $dueAt,
         public WorkOrderEstimatedHours $estimatedHours,
+        public bool $isStarted,
+        public bool $isPaused,
         public ?Machine $machine,
         public ?User $assignee,
         public Location $location,
@@ -69,6 +71,8 @@ class WorkOrderResponseDTO extends BaseResponseDto
                 ],
                 'due_at' => $this->dueAt->toString(),
                 'estimated_hours' => $this->estimatedHours->value(),
+                'is_started' => $this->isStarted,
+                'is_paused' => $this->isPaused,
                 'created_at' => $this->createdAt->toString(),
             ],
         ];

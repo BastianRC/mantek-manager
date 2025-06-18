@@ -23,7 +23,8 @@ class UserMapper
             department: $user->getDepartment(),
             avatarUrl: $user->getAvatarUrl(),
             isActive: $user->isActive(),
-            lastLogin: $user->getLastLogin()
+            lastLogin: $user->getLastLogin(),
+            workOrders: $user->getWorkOrders()
         );
     }
 
@@ -43,6 +44,7 @@ class UserMapper
             avatarUrl: $user->getAvatarUrl(),
             isActive: $user->isActive(),
             lastLogin: $user->getLastLogin(),
+            workOrders: $user->getWorkOrders(),
             createdBy: $user->getCreatedBy(),
             updatedBy: $user->getUpdatedBy(),
             createdAt: $user->getCreatedAt(),

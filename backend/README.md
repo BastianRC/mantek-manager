@@ -1,6 +1,6 @@
 # 🛠️ Mantek Manager - Backend
 
-Backend API del sistema de gestión de mantenimiento industrial **Mantek Manager**, desarrollado en **Laravel 11**, siguiendo los principios de **Arquitectura Limpia**, **DDD**, **Hexagonal** y **SOLID**.
+Backend API del sistema de gestión de mantenimiento industrial **Mantek Manager**, desarrollado en **Laravel 12**, siguiendo los principios de **Arquitectura Limpia**, **DDD**, **Hexagonal** y **SOLID**.
 
 ---
 
@@ -9,7 +9,7 @@ Backend API del sistema de gestión de mantenimiento industrial **Mantek Manager
 * PHP >= 8.2
 * Composer
 * MySQL >= 8
-* Laravel 11
+* Laravel 12
 * Extensiones PHP: `pdo`, `mbstring`, `openssl`, `bcmath`, `curl`, `fileinfo`, `tokenizer`, `xml`, `ctype`, `json`
 
 ---
@@ -24,7 +24,7 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Configura tu `.env` con la base de datos, Redis, y otras variables necesarias:
+Configura tu `.env` con la base de datos y otras variables necesarias:
 
 ```dotenv
 APP_NAME=MantekManager
@@ -38,9 +38,6 @@ DB_PORT=3306
 DB_DATABASE=mantek
 DB_USERNAME=root
 DB_PASSWORD=
-
-REDIS_HOST=127.0.0.1
-REDIS_PORT=6379
 ```
 
 ### 🧱 Migraciones y Seeders
@@ -115,7 +112,7 @@ Roles por defecto:
 ## 📦 Versionado
 
 Este repositorio sigue **SemVer**
-Versión actual: `v1.0.0-beta.1`
+Versión actual: `v1.0.0-beta.2`
 
 ---
 

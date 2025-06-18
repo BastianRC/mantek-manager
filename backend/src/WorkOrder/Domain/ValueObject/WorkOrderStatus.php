@@ -11,7 +11,7 @@ class WorkOrderStatus
         'assigned',
         'in_progress',
         'completed',
-        'cancelled',
+        'canceled',
     ];
 
     public function __construct(

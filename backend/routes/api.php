@@ -42,10 +42,13 @@ use Src\User\Infrastructure\Http\Controllers\DeleteUserController;
 use Src\User\Infrastructure\Http\Controllers\GetUserByIdController;
 use Src\User\Infrastructure\Http\Controllers\GetUsersListController;
 use Src\User\Infrastructure\Http\Controllers\UpdateUserController;
+use Src\WorkOrder\Infrastructure\Http\Controllers\CompleteWorkOrderController;
 use Src\WorkOrder\Infrastructure\Http\Controllers\CreateWorkOrderController;
 use Src\WorkOrder\Infrastructure\Http\Controllers\DeleteWorkOrderController;
 use Src\WorkOrder\Infrastructure\Http\Controllers\GetWorkOrderByIdController;
 use Src\WorkOrder\Infrastructure\Http\Controllers\GetWorkOrdersListController;
+use Src\WorkOrder\Infrastructure\Http\Controllers\PauseWorkOrderController;
+use Src\WorkOrder\Infrastructure\Http\Controllers\StartWorkOrderController;
 use Src\WorkOrder\Infrastructure\Http\Controllers\UpdateWorkOrderController;
 
 Route::prefix('auth')->group(function () {
@@ -119,6 +122,10 @@ Route::prefix('work-orders')->middleware('auth:sanctum')->group(function () {
     Route::post('/', CreateWorkOrderController::class)->middleware('can:Create work order');
     Route::patch('/{id}', UpdateWorkOrderController::class)->middleware('can:Update work order');
     Route::delete('/{id}', DeleteWorkOrderController::class)->middleware('can:Delete work order');
+
+    Route::patch('/{id}/start', StartWorkOrderController::class)->middleware('can:Update work order');
+    Route::patch('/{id}/pause', PauseWorkOrderController::class)->middleware('can:Update work order');
+    Route::patch('/{id}/complete', CompleteWorkOrderController::class)->middleware('can:Update work order');
 });
 
 Route::prefix('chronologies')->middleware('auth:sanctum')->group(function () {

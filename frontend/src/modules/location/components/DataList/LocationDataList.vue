@@ -15,22 +15,7 @@
                                 </p>
                             </div>
                         </div>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <MoreHorizontal class="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem @click="navigateTo(`locations/${location.id}`)">Ver perfil
-                                </DropdownMenuItem>
-                                <DropdownMenuItem @click="setEditMode(true); navigateTo(`users/${location.id}`)">Editar
-                                    ubicación</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem @click="destroy(location.id)" class="text-destructive">
-                                    Eliminar</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <DropdownComponent :items="getDropdownItems(location)" />
                     </div>
 
                     <div class="space-y-3 mb-4">
@@ -79,20 +64,17 @@
 </template>
 
 <script setup lang="ts">
-import { Building, Cpu, Factory, Home, MapPin, MoreHorizontal, Users, Warehouse } from 'lucide-vue-next';
+import { Building, Cpu, Factory, Home, MapPin, Users, Warehouse } from 'lucide-vue-next';
 import Card from '~/components/ui/card/Card.vue';
 import CardContent from '~/components/ui/card/CardContent.vue';
-import DropdownMenu from '~/components/ui/dropdown-menu/DropdownMenu.vue';
-import DropdownMenuTrigger from '~/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
-import Button from '~/components/ui/button/Button.vue';
-import DropdownMenuContent from '~/components/ui/dropdown-menu/DropdownMenuContent.vue';
-import DropdownMenuItem from '~/components/ui/dropdown-menu/DropdownMenuItem.vue';
-import DropdownMenuSeparator from '~/components/ui/dropdown-menu/DropdownMenuSeparator.vue';
 import Badge from '~/components/ui/badge/Badge.vue';
 import { filters } from './filters';
 import DataList from '~/components/custom/DataList/DataList.vue';
 import { useDeleteLocation } from '../../composables/useDeleteLocation';
 import type { Location } from '../../types/Location';
+import type { DropdownButtons } from '~/components/custom/Dropdown/DropdownComponent.vue';
+import { PERMISSIONS } from '~/modules/shared/constants/permissions';
+import DropdownComponent from '~/components/custom/Dropdown/DropdownComponent.vue';
 
 const { setEditMode } = useEditMode()
 
@@ -101,6 +83,31 @@ const { mutate: destroy } = useDeleteLocation()
 const props = defineProps<{
     locations: Location[]
 }>()
+
+function getDropdownItems(location: Location): DropdownButtons[] {
+  return [
+    {
+      text: 'Ver perfil',
+      click: () => navigateTo(`locations/${location.id}`),
+      canView: PERMISSIONS.VIEW_LOCATION
+    },
+    {
+      text: 'Editar ubicación',
+      click: () => {
+        setEditMode(true)
+        navigateTo(`locations/${location.id}`)
+      },
+      canView: PERMISSIONS.UPDATE_LOCATION
+    },
+    {
+      text: 'Eliminar',
+      click: () => destroy(location.id),
+      class: 'text-destructive',
+      separatorBefore: true,
+      canView: PERMISSIONS.DELETE_LOCATION
+    }
+  ]
+}
 
 const getStatusColor = (status: boolean) => {
     switch (status) {

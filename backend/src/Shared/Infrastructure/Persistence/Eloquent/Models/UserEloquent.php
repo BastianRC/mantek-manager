@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Src\WorkOrder\Infrastructure\Persistence\Eloquent\Models\WorkOrderEloquent;
 
 class UserEloquent extends Authenticatable
 {
@@ -45,6 +46,11 @@ class UserEloquent extends Authenticatable
     protected static function newFactory()
     {
         return UserEloquentFactory::new();
+    }
+
+    public function workOrders()
+    {
+        return $this->hasMany(WorkOrderEloquent::class, 'assignee_id');
     }
 
     public function creator()

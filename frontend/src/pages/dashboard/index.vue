@@ -5,8 +5,7 @@
 <script setup lang="ts">
 
 definePageMeta({
-    redirect: '/dashboard/users',
-    middleware: ['auth'],
+    middleware: ['auth', 'redirect'],
     layout: 'dashboard'
 })
 </script>

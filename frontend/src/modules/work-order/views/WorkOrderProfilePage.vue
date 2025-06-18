@@ -36,13 +36,14 @@
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card class="gap-0">
                     <CardHeader>
                         <CardTitle>Asignación</CardTitle>
                     </CardHeader>
                     <CardContent class="space-y-4">
                         <UpdateWorkOrderAssigneeUser ref="assigneeFormRef" v-if="workOrder && users"
-                            :work-order="workOrder" :users="users" :edit-mode="editMode" />
+                            :work-order="workOrder" :users="users" :edit-mode="editMode"
+                            :can-edit-technician="canEditTechnician" />
                     </CardContent>
                 </Card>
 
@@ -53,7 +54,12 @@
                     <CardContent class="space-y-4">
                         <div class="flex items-center gap-2">
                             <Clock class="size-4 text-muted-foreground" />
-                            <span class="text-sm">Estimado: {{ workOrder?.estimated_hours }}h</span>
+                            <span class="text-sm">Estimado: {{ formatWorkedHours(workOrder?.estimated_hours) }}</span>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <Clock class="size-4 text-muted-foreground" />
+                            <span class="text-sm">Realizado: {{ formatWorkedHours(workOrder?.actual_hours) }}</span>
                         </div>
                     </CardContent>
                 </Card>
@@ -129,6 +135,7 @@ import UpdateWorkOrderAssigneeUser from '../components/UpdateWorkOrderAssigneeUs
 import { useGetUsersList } from '~/modules/user/composables/useGetUsersList'
 import ChronologyList from '~/modules/chronology/components/ChronologyList.vue'
 import { useGetChronologyByTarget } from '~/modules/chronology/composables/useGetChronologyByTarget'
+import { formatWorkedHours } from '../utils/formatter'
 
 const route = useRoute()
 const { editMode, setEditMode, clearEditMode } = useEditMode()
@@ -179,6 +186,43 @@ const handleCancel = async () => {
 
     clearEditMode()
 }
+
+watch(() => generalFormRef.value?.values.status, (value) => {
+    const mustClearTechnician = !['assigned'].includes(value)
+    if (mustClearTechnician && assigneeFormRef.value?.values.assignee_id !== undefined) {
+        assigneeFormRef.value?.setFieldValue('assignee_id', undefined)
+    }
+
+
+})
+
+watch(() => assigneeFormRef.value?.values.assignee_id, (value) => {
+    const currentStatus = generalFormRef.value?.values.status
+    if (!generalFormRef.value) return
+
+    const canAutoAssign = ['pending', 'assigned'].includes(currentStatus)
+
+    if (value && canAutoAssign && currentStatus !== 'assigned') {
+        generalFormRef.value.setFieldValue('status', 'assigned')
+    }
+
+    if (!value && canAutoAssign && currentStatus === 'assigned') {
+        generalFormRef.value.setFieldValue('status', 'pending')
+    }
+})
+
+watch(
+    () => workOrder.value,
+    (newData) => {
+        if (!newData || !generalFormRef.value) return
+        generalFormRef.value.setFieldValue('status', newData.status)
+    },
+    { deep: true }
+)
+
+const canEditTechnician = computed(() => {
+    return ['pending', 'assigned'].includes(generalFormRef.value?.values.status)
+})
 
 onServerPrefetch(async () => {
     await Promise.all([

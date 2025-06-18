@@ -7,6 +7,7 @@ use Src\User\Domain\ValueObject\UserCreatedAt;
 use Src\User\Domain\ValueObject\UserEmail;
 use Src\User\Domain\ValueObject\UserLastLogin;
 use Src\User\Domain\ValueObject\UserUpdatedAt;
+use Src\WorkOrder\Domain\Entities\WorkOrder;
 
 interface User
 {
@@ -28,11 +29,16 @@ interface User
     public function getCreatedBy(): ?self;
     public function getUpdatedBy(): ?self;
 
+    /** @return WorkOrder[] */
+    public function getWorkOrders(): ?array;
+
     public function isPersisted(): bool;
 
     public function changeFirstName(string $firstName): self;
     public function changeLastName(string $lastName): self;
     public function changeEmail(UserEmail $email): self;
+    public function changeRole(string $role): self;
+
     public function changePhone(string $phone): self;
     public function changeDepartment(string $department): self;
     public function changeNotes(?string $notes): self;

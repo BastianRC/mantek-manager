@@ -5,14 +5,14 @@
                 <Clock class="h-4 w-4 text-muted-foreground" />
                 <span class="text-sm">Órdenes asignadas</span>
             </div>
-            <span class="font-medium">0</span>
+            <span class="font-medium">{{ user.work_orders.length }}</span>
         </div>
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <CheckCircle class="h-4 w-4 text-green-600" />
                 <span class="text-sm">Completadas</span>
             </div>
-            <span class="font-medium text-green-600">0</span>
+            <span class="font-medium text-green-600">{{ user.work_orders.filter((wo) => wo.status === 'completed').length }}</span>
         </div>
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">

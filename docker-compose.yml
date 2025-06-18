@@ -45,7 +45,6 @@ services:
     depends_on:
       - backend
     environment:
-      # 👇 Esta es la URL del backend desde el punto de vista del contenedor
       NUXT_PUBLIC_LARAVEL_API_URL: http://host.docker.internal:8000
     extra_hosts:
       - "host.docker.internal:host-gateway"

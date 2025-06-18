@@ -20,7 +20,6 @@ interface Role
      * @return User[]
      */
     public function getUsers(): array;
-    public function getUsersCount(): int;
     public function getCreatedAt(): RoleCreatedAt;
     public function getUpdatedAt(): RoleUpdatedAt;
     public function getCreatedBy(): ?User;

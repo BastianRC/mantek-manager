@@ -36,6 +36,8 @@ class WorkOrderDetailsResponseDTO extends BaseResponseDto
         public ?WorkOrderCompletedAt $completedAt,
         public WorkOrderEstimatedHours $estimatedHours,
         public ?float $actualHours,
+        public bool $isStarted,
+        public bool $isPaused,
         public ?Machine $machine,
         public ?User $assignee,
         public Location $location,
@@ -46,7 +48,7 @@ class WorkOrderDetailsResponseDTO extends BaseResponseDto
         /** @var WorkOrderMaterial[] */
         public ?array $materials,
         public User $createdBy,
-        public User $updatedBy,
+        public ?User $updatedBy,
         public WorkOrderCreatedAt $createdAt,
         public WorkOrderUpdatedAt $updatedAt
     ) {
@@ -72,6 +74,8 @@ class WorkOrderDetailsResponseDTO extends BaseResponseDto
                 'completed_at' => $this->completedAt?->toString(),
                 'estimated_hours' => $this->estimatedHours->value(),
                 'actual_hours' => $this->actualHours,
+                'is_started' => $this->isStarted,
+                'is_paused' => $this->isPaused,
                 'machine' => $this->machine ? [
                     'id' => $this->machine->getId(),
                     'name' => $this->machine->getName(),
@@ -101,13 +105,13 @@ class WorkOrderDetailsResponseDTO extends BaseResponseDto
                     'name' => $this->createdBy->getFullName(),
                     'avatar_url' => $this->createdBy->getAvatarUrl(),
                 ],
-                'updated_by' => [
+                'updated_by' =>$this->updatedBy ? [
                     'id' => $this->updatedBy->getId(),
                     'name' => $this->updatedBy->getFullName(),
                     'avatar_url' => $this->updatedBy->getAvatarUrl(),
-                ],
+                ] : null,
                 'created_at' => $this->createdAt->toString(),
-                'updated_at' => $this->updatedAt->toString(),
+                'updated_at' => $this->updatedAt ? $this->updatedAt->toString() : null,
             ]
         ];
     }

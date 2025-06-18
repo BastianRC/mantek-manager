@@ -18,6 +18,11 @@ export const getWorkOrderStatusMeta = (status: string): {
             icon: Clock,
             color: 'bg-yellow-100 text-yellow-600 border-yellow-200'
         },
+        assigned: {
+            label: 'Asignada',
+            icon: UserCheck,
+            color: 'bg-gray-100 text-gray-600 border-gray-200'
+        },
         in_progress: {
             label: 'En progreso',
             icon: Hammer,
@@ -28,7 +33,7 @@ export const getWorkOrderStatusMeta = (status: string): {
             icon: CheckCircle2,
             color: 'bg-green-100 text-green-600 border-green-200'
         },
-        cancelled: {
+        canceled: {
             label: 'Cancelada',
             icon: XCircle,
             color: 'bg-red-100 text-red-600 border-red-200'

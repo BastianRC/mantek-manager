@@ -2,7 +2,7 @@
 
 namespace Src\Role\Application\UseCases;
 
-use Src\Role\Application\DTOs\AllRolesResponseDto;
+use Src\Role\Application\DTOs\AllRolesResponseDTO;
 use Src\Role\Application\Mappers\RoleMapper;
 use Src\Role\Domain\Repositories\RoleRepositoryInterface;
 
@@ -12,7 +12,7 @@ class GetRolesListUseCase
         private RoleRepositoryInterface $repo
     ) {}
 
-    public function execute(): AllRolesResponseDto
+    public function execute(): AllRolesResponseDTO
     {
         $roles = $this->repo->findAll();
         

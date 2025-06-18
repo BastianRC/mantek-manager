@@ -15,6 +15,7 @@ use Src\WorkOrder\Domain\ValueObject\WorkOrderStartedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderStatus;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderUpdatedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderNumber;
+use Src\WorkOrder\Domain\ValueObject\WorkOrderResumedAt;
 use Src\WorkOrder\Domain\ValueObject\WorkOrderType;
 
 interface WorkOrder
@@ -33,10 +34,11 @@ interface WorkOrder
     public function getPausedAt(): ?WorkOrderPausedAt;
     public function getStartedAt(): ?WorkOrderStartedAt;
     public function getCompletedAt(): ?WorkOrderCompletedAt;
+    public function getResumedAt(): ?WorkOrderResumedAt;
     public function getEstimatedHours(): WorkOrderEstimatedHours;
     public function getActualHours(): ?float;
     public function getMachine(): ?Machine;
-    public function getAssignee(): User;
+    public function getAssignee(): ?User;
     public function getLocation(): Location;
 
     /**
@@ -44,7 +46,7 @@ interface WorkOrder
      */
     public function getMaterials(): array;
     public function getCreatedBy(): User;
-    public function getUpdatedBy(): User;
+    public function getUpdatedBy(): ?User;
     public function getCreatedAt(): WorkOrderCreatedAt;
     public function getUpdatedAt(): WorkOrderUpdatedAt;
 
@@ -60,6 +62,7 @@ interface WorkOrder
     public function changePausedAt(?WorkOrderPausedAt $pausedAt): self;
     public function changeStartedAt(?WorkOrderStartedAt $startedAt): self;
     public function changeCompletedAt(?WorkOrderCompletedAt $completedAt): self;
+    public function changeResumedAt(?WorkOrderResumedAt $resumedAt): self;
     public function changeEstimatedHours(WorkOrderEstimatedHours $estimatedHours): self;
     public function changeActualHours(?float $actualHours): self;
     public function changeMachine(?Machine $machine): self;
@@ -74,4 +77,6 @@ interface WorkOrder
     public function changeUpdatedAt(WorkOrderUpdatedAt $updatedAt): self;
 
     public function isPersisted(): bool;
+    public function isStarted(): bool;
+    public function isPaused(): bool;
 }

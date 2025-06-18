@@ -53,10 +53,6 @@ class RoleEntity implements Role
     {
         return $this->users;
     }
-    public function getUsersCount(): int
-    {
-        return count($this->users);
-    }
     public function getCreatedBy(): ?User
     {
         return $this->createdBy;

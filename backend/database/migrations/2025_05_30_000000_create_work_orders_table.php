@@ -30,7 +30,7 @@ return new class extends Migration
             $table->text('description');
 
             $table->enum('priority', ['low', 'medium', 'high', 'critical'])->default('medium');
-            $table->enum('status', ['pending', 'assigned', 'in_progress', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'assigned', 'in_progress', 'completed', 'canceled'])->default('pending');
 
             $table->foreignId('assignee_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('machine_id')->nullable()->constrained('machines')->nullOnDelete();
@@ -40,6 +40,7 @@ return new class extends Migration
             $table->timestamp('paused_at')->nullable();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('completed_at')->nullable();
+            $table->timestamp('resumed_at')->nullable();
 
             $table->decimal('estimated_hours', 5, 2);
             $table->decimal('actual_hours', 5, 2)->nullable();

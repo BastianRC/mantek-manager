@@ -2,6 +2,7 @@
 
 namespace Src\Auth\Infrastructure\Repositories;
 
+use Carbon\Carbon;
 use Src\Auth\Domain\Entity\AuthUser;
 use Src\Auth\Domain\Repositories\AuthUserRepositoryInterface;
 use Src\Auth\Infrastructure\Mappers\AuthUserEntityMapper;
@@ -19,6 +20,11 @@ class AuthUserSanctumRepository  implements AuthUserRepositoryInterface
     public function createToken(AuthUser $user): string
     {
         $model = UserEloquent::findOrFail($user->getId());
+        
+        $model->update([
+            'last_login' => Carbon::now(),
+        ]);
+
 
         return $model->createToken('auth_token')->plainTextToken;
     }

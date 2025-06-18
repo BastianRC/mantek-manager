@@ -3,7 +3,7 @@
 
     <HeaderComponent title="Gestión de Máquinas" subtitle="Monitorea y gestiona el estado de todas las maquinas">
         <template v-slot:buttons>
-            <Button @click="navigateTo('machines/new')">
+            <Button v-if="hasPermission(PERMISSIONS.CREATE_MACHINE)" @click="navigateTo('machines/new')">
                 <PlusIcon class="mr-0 size-4" />
                 <span class="hidden md:block">Nueva Máquina</span>
             </Button>
@@ -31,6 +31,8 @@ import type { Machine } from '../types/Machine';
 import type { StatItem } from '~/components/custom/Stats/StatItem';
 import StatsComponent from '~/components/custom/Stats/StatsComponent.vue';
 import MachineDataList from '../components/DataList/MachineDataList.vue';
+import { hasPermission } from '~/modules/shared/helpers/permissions';
+import { PERMISSIONS } from '~/modules/shared/constants/permissions';
 
 const { data: machines, isFetching, suspense, refetch } = useGetMachinesList()
 

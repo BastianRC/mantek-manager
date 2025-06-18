@@ -15,14 +15,23 @@
             <FormItem v-auto-animate>
                 <FormLabel>Contraseña</FormLabel>
                 <FormControl>
-                    <Input type="password" placeholder="Contraseña" v-bind="componentField" />
+                    <div class="relative items-center">
+                        <Input :type="showPassword ? 'text' : 'password'" placeholder="Contraseña"
+                            v-bind="componentField" />
+
+                        <Button type="button" variant="ghost" class="absolute end-0 inset-y-0 flex items-center justify-center px-2"
+                            @click.prevent="showPassword = !showPassword">
+                            <component :is="showPassword ? EyeOff : Eye" class="size-4 text-muted-foreground" />
+                        </Button>
+                    </div>
                 </FormControl>
                 <FormDescription>Introduce tu contraseña</FormDescription>
                 <FormMessage />
             </FormItem>
         </FormField>
 
-        <Button :disabled="loading" type="submit" size="lg" class="w-full uppercase tracking-wide font-semibold active:bg-slate-600">
+        <Button :disabled="loading" type="submit" size="lg"
+            class="w-full uppercase tracking-wide font-semibold active:bg-slate-600">
             <Loader2 v-if="loading" class="w-4 h-4 mr-2 animate-spin" />
             Iniciar Sesión
             <LogIn v-if="!loading" class="w-4 h-4 ml-2" />
@@ -47,7 +56,7 @@ import {
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Loader2, LogIn } from 'lucide-vue-next'
+import { Eye, EyeOff, Loader2, LogIn } from 'lucide-vue-next'
 
 const emit = defineEmits(['submit'])
 
@@ -58,6 +67,8 @@ const props = defineProps({
     }
 })
 
+const showPassword: Ref<boolean> = ref(false)
+
 const formSchema = toTypedSchema(z.object({
     email: z
         .string()
@@ -65,6 +76,10 @@ const formSchema = toTypedSchema(z.object({
         .email({ message: 'El email no es válido' }),
     password: z
         .string()
+        .nonempty({ message: 'El contraseña es obligatoria' })
+        .min(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
+        .regex(/[A-Z]/, { message: 'La contraseña debe contener al menos una letra mayúscula' })
+        .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: 'La contraseña debe contener al menos un carácter especial' })
 }))
 
 const { isFieldDirty, handleSubmit } = useForm({

@@ -2,7 +2,7 @@
     <div class="space-y-2">
         <FormField v-slot="{ componentField }" name="assignee_id">
             <FormItem v-auto-animate>
-                <div class="flex items-center gap-3">
+                <div v-if="assigneeUser" class="flex items-center gap-3 mt-4">
                     <Avatar class="size-12">
                         <AvatarImage :src="assigneeUser?.avatar_url ?? ''" />
                         <AvatarFallback>{{ getInitials(`${assigneeUser?.first_name} ${assigneeUser?.last_name}`) }}
@@ -14,8 +14,8 @@
                     </div>
                 </div>
 
-                <FormLabel v-if="editMode" class="mt-3">Técnico Asignado</FormLabel>
-                <div v-if="editMode" class="flex items-center gap-2">
+                <FormLabel v-if="editMode && canEditTechnician" class="mt-4">Técnico Asignado</FormLabel>
+                <div v-if="editMode && canEditTechnician" class="flex items-center gap-2">
                     <Select v-bind="componentField">
                         <FormControl>
                             <SelectTrigger>
@@ -55,7 +55,7 @@ import { getInitials } from '~/lib/utils';
 import Avatar from '~/components/ui/avatar/Avatar.vue';
 import AvatarImage from '~/components/ui/avatar/AvatarImage.vue';
 import AvatarFallback from '~/components/ui/avatar/AvatarFallback.vue';
-import { Calendar, Clock, UserIcon } from 'lucide-vue-next';
+import { Calendar, UserIcon } from 'lucide-vue-next';
 import { FormField } from '~/components/ui/form';
 import FormItem from '~/components/ui/form/FormItem.vue';
 import FormLabel from '~/components/ui/form/FormLabel.vue';
@@ -74,22 +74,24 @@ import { useForm } from 'vee-validate';
 const props = withDefaults(defineProps<{
     workOrder: WorkOrderDetails
     users: User[]
-    editMode: boolean
+    editMode: boolean,
+    canEditTechnician: boolean
 }>(), {
     editMode: false
 })
 
 const assigneeUser = computed(() => {
-    return props.users.find((user) => user.id === values.assignee_id) ?? null
+    const id = values.assignee_id ?? props.workOrder.assignee?.id
+    return props.users.find(user => user.id === id) ?? null
 })
 
 const formSchema = toTypedSchema(z.object({
     assignee_id: z
         .number()
-        .min(1, { message: 'El tecnico asignado es obligatorio' }),
+        .optional(),
 }))
 
-const { handleSubmit, resetForm, values } = useForm({
+const { handleSubmit, resetForm, setFieldValue, values } = useForm({
     validationSchema: formSchema,
     initialValues: {
         assignee_id: props.workOrder.assignee?.id
@@ -107,7 +109,9 @@ const submit = handleSubmit(
 
 defineExpose({
     submit,
-    resetForm
+    resetForm,
+    setFieldValue,
+    values
 })
 </script>
 

@@ -99,7 +99,8 @@
                                         <TooltipComponent v-if="locations.length === 0"
                                             message="No hay ubicaciones creadas" />
                                     </FormLabel>
-                                    <Combobox by="label" v-model="componentField.modelValue" :disabled="!!values.machine_id">
+                                    <Combobox by="label" v-model="componentField.modelValue"
+                                        :disabled="!!values.machine_id">
                                         <FormControl>
                                             <ComboboxAnchor>
                                                 <div class="relative w-full items-center">
@@ -150,7 +151,8 @@
                                         <FormControl>
                                             <ComboboxAnchor>
                                                 <div class="relative w-full items-center">
-                                                    <ComboboxInput :display-value="(val) => machines.find((m) => m.id === val)?.name ?? ''"
+                                                    <ComboboxInput
+                                                        :display-value="(val) => machines.find((m) => m.id === val)?.name ?? ''"
                                                         placeholder="Seleccionar máquina" />
                                                     <ComboboxTrigger
                                                         class="absolute end-0 inset-y-0 flex items-center justify-center">
@@ -183,7 +185,7 @@
 
                                     <div v-if="values.machine_id" class="p-2 bg-muted rounded-lg text-sm">
                                         <strong>{{machines.find((machine) => machine.id === values.machine_id)?.name
-                                        }}</strong> - {{machines.find((machine) => machine.id ===
+                                            }}</strong> - {{machines.find((machine) => machine.id ===
                                                 values.machine_id)?.location.name}}
                                     </div>
                                     <FormMessage />
@@ -260,9 +262,9 @@
                         <div class="space-y-2">
                             <FormField v-slot="{ componentField, value }" name="status">
                                 <FormItem v-auto-animate>
-                                    <FormLabel>Estado *</FormLabel>
+                                    <FormLabel>Estado</FormLabel>
                                     <div class="flex items-center gap-2">
-                                        <Select v-bind="componentField">
+                                        <Select v-bind="componentField" :disabled="true">
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Seleccionar técnico">
@@ -369,7 +371,7 @@
                         <div class="space-y-2">
                             <FormField v-slot="{ componentField }" name="assignee_id">
                                 <FormItem v-auto-animate>
-                                    <FormLabel>Técnico Asignado *</FormLabel>
+                                    <FormLabel>Técnico Asignado</FormLabel>
                                     <div class="flex items-center gap-2">
                                         <Select v-bind="componentField">
                                             <FormControl>
@@ -540,9 +542,9 @@ const getUnitText = (unit: string): string => {
             return '(Unidad)'
         case 'kg':
             return '(Kg)'
-        case 'meter':
+        case 'm':
             return '(Metro)'
-        case 'liter':
+        case 'l':
             return '(Litro)'
         case 'box':
             return '(Caja)'
@@ -553,9 +555,7 @@ const getUnitText = (unit: string): string => {
 
 const statuses: Ref<{ label: string; value: string }[]> = ref([
     { label: 'Pendiente', value: 'pending' },
-    { label: 'En progreso', value: 'in_progress' },
-    { label: 'Completada', value: 'completed' },
-    { label: 'Cancelada', value: 'cancelled' }
+    { label: 'Asignado', value: 'assigned' },
 ])
 
 
@@ -621,7 +621,7 @@ const formSchema = toTypedSchema(z.object({
         .min(0.1, { message: 'Las horas estimadas son obligatorias' }),
     assignee_id: z
         .number()
-        .min(1, { message: 'El tecnico asignado es obligatorio' }),
+        .optional(),
     requested_by: z
         .string()
         .optional()
@@ -639,6 +639,14 @@ const { handleSubmit, setFieldValue, values } = useForm({
         status: 'pending',
         estimated_hours: 1,
         requested_by: ''
+    }
+})
+
+watch(() => values.assignee_id, (value) => {
+    if (value) {
+        setFieldValue('status', 'assigned')
+    } else {
+        setFieldValue('status', undefined)
     }
 })
 

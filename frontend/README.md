@@ -1,6 +1,6 @@
 # 🎨 Mantek Manager - Frontend
 
-Frontend del sistema de gestión de mantenimiento industrial **Mantek Manager**, desarrollado con **Vue 3**, **TypeScript** y **Tailwind CSS**, utilizando una **arquitectura modular tipo Screaming Architecture** siguiendo los principios de **DDD** y **SOLID**.
+Frontend del sistema de gestión de mantenimiento industrial **Mantek Manager**, desarrollado con **Nuxt 3**, **TypeScript** y **Tailwind CSS**, utilizando una **arquitectura modular tipo Screaming Architecture** siguiendo los principios de **DDD** y **SOLID**.
 
 ---
 
@@ -79,9 +79,8 @@ Autenticación con **Laravel Sanctum**. El token se guarda y gestiona con **Pini
 * Login/logout con validación y persistencia
 * Gestión de usuarios y roles
 * Gestión ubicaciones
-* Maquinaria y partes de trabajo
+* Maquinaria y ordenes de trabajo
 * Vistas reactivas y componentes dinámicos
-* Integración en tiempo real con backend
 
 ---
 
@@ -97,7 +96,7 @@ Autenticación con **Laravel Sanctum**. El token se guarda y gestiona con **Pini
 ## 📦 Versionado
 
 Este repositorio sigue **SemVer**
-Versión actual: `v1.0.0-beta.1`
+Versión actual: `v1.0.0-beta.2`
 
 ---
 

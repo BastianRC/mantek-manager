@@ -39,4 +39,13 @@ abstract class BaseDateTime
     {
         return $this->value == $other->value();
     }
+
+    public function diffInHours(BaseDateTime|DateTimeImmutable $other): float
+    {
+        $otherValue = $other instanceof BaseDateTime ? $other->value() : $other;
+
+        $diffInSeconds = abs($this->value->getTimestamp() - $otherValue->getTimestamp());
+
+        return round($diffInSeconds / 3600, 2);
+    }
 }

@@ -2,15 +2,15 @@
 
 **Mantek Manager** es una plataforma completa para la **gestión de mantenimiento de maquinaria industrial**, desarrollada con tecnologías modernas y principios de arquitectura limpia.
 
-> 🔒 Este repositorio contiene el frontend y backend preparados para su primer lanzamiento público: `v1.0.0-beta.1`.
+> 🔒 Este repositorio contiene el frontend y backend preparados para su primer lanzamiento público: `v1.0.0-beta.2`.
 
 ---
 
 ## 🗞 Versión actual
 
-**`v1.0.0-beta.1`**
+**`v1.0.0-beta.2`**
 🗓️ Junio 2025
-🔖 Tag oficial: [v1.0.0-beta.1](https://github.com/BastianRC/mantek-manager/releases/tag/v1.0.0-beta.1)
+🔖 Tag oficial: [v1.0.0-beta.2](https://github.com/BastianRC/mantek-manager/releases/tag/v1.0.0-beta.2)
 
 ---
 
@@ -18,9 +18,9 @@
 
 ```
 mantek-manager-public/
-├── frontend/       → Aplicación cliente (Vue 3 + Tailwind + Vite)
-├── backend/        → API REST (Laravel 11 + Hexagonal + DDD)
-├── docker-compose.yml (opcional)
+├── frontend/       → Aplicación cliente (Nuxt 3 + Tailwind + Vite)
+├── backend/        → API REST (Laravel 12 + Hexagonal + DDD)
+├── docker-compose.yml
 └── README.md
 ```
 
@@ -30,16 +30,16 @@ mantek-manager-public/
 
 ### Frontend
 
-* [Vue 3](https://vuejs.org/)
+* [Nuxt 3](https://nuxt.com/)
 * [Tailwind CSS](https://tailwindcss.com/)
 * [Pinia](https://pinia.vuejs.org/)
 * [TanStack Query](https://tanstack.com/query/latest/docs/framework/vue/overview)
 * [Vite](https://vitejs.dev/)
-* Shadcn UI (adaptado)
+* [Shadcn Vue](https://www.shadcn-vue.com/)
 
 ### Backend
 
-* [Laravel 11](https://laravel.com/)
+* [Laravel 12](https://laravel.com/)
 * PHP 8.2+
 * MySQL 8
 * Arquitectura Hexagonal + DDD + SOLID

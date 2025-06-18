@@ -11,23 +11,11 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold">{{ role.name }}</h3>
-                                <p class="text-sm text-muted-foreground">{{ role.users_count }} Usuario/s</p>
+                                <p class="text-sm text-muted-foreground">{{ role.users.length }} Usuario/s</p>
                             </div>
                         </div>
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                    <MoreHorizontal class="size-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem @click="navigateTo(`roles/${role.id}`)">Ver perfil</DropdownMenuItem>
-                                <DropdownMenuItem @click="setEditMode(true); navigateTo(`roles/${role.id}`)">Editar rol</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem @click="destroy(role.id)" class="text-destructive">Eliminar rol</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <DropdownComponent :items="getDropdownItems(role)" />
                     </div>
 
                     <p class="text-sm text-muted-foreground mb-4">{{ role.description }}</p>
@@ -62,24 +50,16 @@
 </template>
 
 <script setup lang="ts">
-import { Calendar, Key, Mail, MoreHorizontal, Phone, Shield, Users } from 'lucide-vue-next';
+import { Key, Shield } from 'lucide-vue-next';
 import Card from '~/components/ui/card/Card.vue';
 import CardContent from '~/components/ui/card/CardContent.vue';
-import Avatar from '~/components/ui/avatar/Avatar.vue';
-import AvatarImage from '~/components/ui/avatar/AvatarImage.vue';
-import AvatarFallback from '~/components/ui/avatar/AvatarFallback.vue';
-import { getInitials } from '~/lib/utils';
-import DropdownMenu from '~/components/ui/dropdown-menu/DropdownMenu.vue';
-import DropdownMenuTrigger from '~/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
-import Button from '~/components/ui/button/Button.vue';
-import DropdownMenuContent from '~/components/ui/dropdown-menu/DropdownMenuContent.vue';
-import DropdownMenuItem from '~/components/ui/dropdown-menu/DropdownMenuItem.vue';
-import DropdownMenuSeparator from '~/components/ui/dropdown-menu/DropdownMenuSeparator.vue';
-import Badge from '~/components/ui/badge/Badge.vue';
 import { filters } from './filters';
 import DataList from '~/components/custom/DataList/DataList.vue';
 import type { Role } from '../../types/Role';
 import { useDeleteRole } from '../../composables/useDeleteRole';
+import type { DropdownButtons } from '~/components/custom/Dropdown/DropdownComponent.vue';
+import { PERMISSIONS } from '~/modules/shared/constants/permissions';
+import DropdownComponent from '~/components/custom/Dropdown/DropdownComponent.vue';
 
 const { setEditMode } = useEditMode()
 
@@ -88,6 +68,31 @@ const { mutate: destroy } = useDeleteRole()
 const props = defineProps<{
     roles: Role[]
 }>()
+
+function getDropdownItems(role: Role): DropdownButtons[] {
+    return [
+        {
+            text: 'Ver perfil',
+            click: () => navigateTo(`roles/${role.id}`),
+            canView: PERMISSIONS.VIEW_ROLE
+        },
+        {
+            text: 'Editar rol',
+            click: () => {
+                setEditMode(true)
+                navigateTo(`roles/${role.id}`)
+            },
+            canView: PERMISSIONS.UPDATE_ROLE
+        },
+        {
+            text: 'Eliminar',
+            click: () => destroy(role.id),
+            class: 'text-destructive',
+            separatorBefore: true,
+            canView: PERMISSIONS.DELETE_ROLE
+        }
+    ]
+}
 
 const getColorClasses = (color: string) => {
     const colors = {
